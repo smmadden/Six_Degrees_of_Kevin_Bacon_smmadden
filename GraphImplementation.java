@@ -2,21 +2,25 @@ import java.util.*;
 
 public class GraphImplementation {
     // adjacency list implementation of a graph to store the actors
+    // uses a hashtable to keep track of what index each actor is
 
     private ArrayList<GraphNode> graph;
+    private Hashtable<String, Integer> indeces;
     private int vertices;
     // don't need number of vertices because length of graph will be updated as needed
 
     public GraphImplementation(){
         graph = new ArrayList<>();
+        indeces = new Hashtable<>();
         vertices = 0;
     }
 
     public void addVertex(String value){ // the head of the list is the vertex at that index
         // if the same value is added twice don't do anything
         if(findValue(value) == -1){
-            graph.add(new GraphNode(value, vertices++));
-            //vertices++;
+            graph.add(new GraphNode(value, vertices));
+            indeces.put(value, vertices);
+            vertices++;
         }
 
     }
@@ -58,14 +62,20 @@ public class GraphImplementation {
 
     // do we need a function for neighbors? is just the list of nodes at a particular index
 
-    public int findValue(String value){
-        for(int i=0; i<vertices; i++){
-            if(graph.get(i).value.equals(value)){
-                return i;
-            }
+    public int findValue(String value){ // finds the index of the value in the array
+        if(indeces.get(value) == null){
+            return -1;
+        } else {
+            return indeces.get(value);
         }
-        // finding a particular value, in this case an actor, in the list
-        return -1; // value not found
+
+//        for(int i=0; i<vertices; i++){
+//            if(graph.get(i).value.equals(value)){
+//                return i;
+//            }
+//        }
+//        // finding a particular value, in this case an actor, in the list
+//        return -1; // value not found
     }
 
 

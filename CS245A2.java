@@ -28,7 +28,7 @@ public class CS245A2{
       scan.nextLine(); // skips over first line which has formatting
       line_num++;
       while(scan.hasNextLine()){
-      //for(int i=0; i<400; i++){
+      //for(int i=0; i<353; i++){
         line = scan.nextLine();
         line_num++;
         // split line up based on info we want - how should I do this?
@@ -68,7 +68,10 @@ public class CS245A2{
                 try{
                   graph.addEdge(graph.findValue(actors[z]), graph.findValue(actors[c])); // know that the vertices exist so no reason to worry about findValue returning negative one
                 } catch(Exception e){
-                  System.out.println("\n\n\nProblem: line " + line_num + "\n " + actors[z] + " " + actors [c] + "\n\n\n");
+                  System.out.println("\n\nProblem: line " + line_num + "\n " + actors[z] + " " + actors [c] + "\n\n");
+                  for(int w=0; w<actors.length; w++){
+                      System.out.println(actors[w]);
+                  }
                 }
               }
 
@@ -98,9 +101,12 @@ public class CS245A2{
       return;
     }
 
-    graph.print();
-
     Scanner input = new Scanner(System.in);
+    System.out.print("\nHere: ");
+    input.nextLine();
+
+//    graph.print();
+
 
 //    System.out.print("Actor 1 name: ");
 //    String actor1 = input.nextLine();
