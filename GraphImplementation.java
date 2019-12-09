@@ -78,6 +78,94 @@ public class GraphImplementation {
 //        return -1; // value not found
     }
 
+    // first index is the actors, second is :
+    // vertex[0], path[1], dist[2], known[3]
+
+    public void findShortestPath(String source, String target){
+        int src = findValue(source);
+        int tar = findValue(target);
+        //int[][] table = new int[graph.size()][4];
+        int[] path = new int[vertices];
+        int[] dist = new int[vertices];
+        boolean[] known = new boolean[vertices];
+
+        for(int i=0; i<vertices; i++){
+            path[i] = -1;
+            dist[i] = Integer.MAX_VALUE;
+            known[i] = false;
+        }
+
+        // source vertex path will remain -1 and distance will be 0
+        dist[src] = 0;
+        known[src] = true;
+
+        int curr = src;
+        while(!known[tar]){ // while the target vertex is not known
+            // update all paths and distances, find min distance, set that to true
+
+
+            // update all paths
+            GraphNode node = graph.get(curr); // node is the actor, node.next and so on are all of the neighbors
+            while(node.next != null){
+                node = node.next;
+                // if the total distance of the entire path, which would be the dist for the current node + 1
+                if(!known[node.index] && dist[node.index] > dist[curr]+1 ) { // need to check if the distance is less than first because if not then don't change anything
+                    path[node.index] = curr;
+                    dist[node.index] = dist[curr] + 1;
+                }
+
+            }
+
+            // find min distance of the unknowns
+            int minDist = findMin(path, dist, known);
+
+            known[minDist] = true;
+
+
+
+            curr = minDist;
+
+        }
+
+        // now the target is known
+        // need to print the results or return a string
+
+        // to print, need to trace back the entire path
+
+        printPath(path, tar);
+
+//        for(int i=0; i< path.length; i++){
+//            System.out.println(known[i] + " " + path[i] + " " + dist[i]);
+//
+//        }
+
+
+    }
+
+    private void printPath(int[] path, int index){
+        if(path[index] == -1){ // base case, the path of the source will be -1
+            System.out.print(graph.get(index).value); // prints out the value
+        } else {
+            printPath(path, path[index]);
+            System.out.print(" --> " + graph.get(index).value);
+        }
+
+    }
+
+    private int findMin(int[] path, int[] dist, boolean[] known){
+        int min = Integer.MAX_VALUE;
+        int index = -1;
+
+        for(int i=0; i<dist.length; i++){
+            if(!known[i] && path[i] != -1 && dist[i] <= min){
+                min = dist[i];
+                index = i;
+            }
+        }
+        return index;
+    }
+
+
 
 
     class GraphNode{
