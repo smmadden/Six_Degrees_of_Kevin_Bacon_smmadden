@@ -17,11 +17,12 @@ public class CS245A2{
     GraphImplementation graph = new GraphImplementation();
     CS245A2 program = new CS245A2();
     File file = new File("/Users/saigemadden/documents/sem3/cs245/assignment2/tmdb_5000_credits.csv");
+    //File file = new File("testerFile.txt");
 
     int line_num = 0;
     try{
       LinkedList<LinkedList<String>> moviesAndActors = new LinkedList<>();
-      int totalNumActors = 0;
+      //int totalNumActors = 0;
       Scanner scan = new Scanner(file);
       String line;
 
@@ -36,7 +37,9 @@ public class CS245A2{
         //String[] line_arr = line.split();
         line = line.substring(line.indexOf(",")+1);
         line = line.substring(line.indexOf(",")+1); // now should just be cast and crew
-        String cast = line.substring(line.indexOf("["), line.indexOf("]")); // this gives us all of the cast
+        //String cast = line.substring(line.indexOf("["), line.indexOf("]")); // this gives us all of the cast
+        String cast = line.substring(line.indexOf("["), line.lastIndexOf("]")); // this gives us all of the cast and crew
+        cast = cast.substring(0, cast.lastIndexOf("]")); // this should give us all of the cast
         String[] actors = cast.split("\\},");
         //System.out.println(cast + "\n\n");
         //System.out.println(actors[0] + "\n\n");
@@ -55,7 +58,7 @@ public class CS245A2{
 
           //moviesAndActors.add(0, movie);
           //System.out.println(actors[j]);
-          totalNumActors += actors.length;
+          //totalNumActors += actors.length;
 
 
 
@@ -102,17 +105,34 @@ public class CS245A2{
     }
 
     Scanner input = new Scanner(System.in);
-    System.out.print("\nHere: ");
-    input.nextLine();
+//    System.out.print("\nHere: ");
+//    input.nextLine();
 
-    graph.print();
+    //graph.print();
 
 
-//    System.out.print("Actor 1 name: ");
-//    String actor1 = input.nextLine();
-//    System.out.print("Actor 2 name: ");
-//    String actor2 = input.nextLine();
-//    System.out.println("Path between " + actor1 + " and " + actor2 + ": ");
+    // NEED TO DO INPUT VALIDATION
+
+    System.out.print("Actor 1 name: ");
+    String actor1 = input.nextLine();
+    while(graph.findValue(actor1) == -1){
+      System.out.println("No such actor.");
+      System.out.print("Actor 1 name: ");
+      actor1 = input.nextLine();
+    }
+    System.out.print("Actor 2 name: ");
+    String actor2 = input.nextLine();
+    while(graph.findValue(actor1) == -1){
+      System.out.println("No such actor.");
+      System.out.print("Actor 2 name: ");
+      actor2 = input.nextLine();
+    }
+    System.out.print("Path between " + actor1 + " and " + actor2 + ": ");
+    graph.findShortestPath(actor1, actor2);
+    System.out.println();
+
+
+    // now have to implement the algorithm to search for the shortest path - should this be a separate class or the same class?
 
   }
 
