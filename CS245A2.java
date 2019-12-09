@@ -68,10 +68,10 @@ public class CS245A2{
                 try{
                   graph.addEdge(graph.findValue(actors[z]), graph.findValue(actors[c])); // know that the vertices exist so no reason to worry about findValue returning negative one
                 } catch(Exception e){
-                  System.out.println("\n\nProblem: line " + line_num + "\n " + actors[z] + " " + actors [c] + "\n\n");
-                  for(int w=0; w<actors.length; w++){
-                      System.out.println(actors[w]);
-                  }
+                  System.out.println("\nProblem: line " + line_num + "\n " + actors[z] + " " + actors [c] + "\n");
+//                  for(int w=0; w<actors.length; w++){
+//                      System.out.println(actors[w]);
+//                  }
                 }
               }
 
@@ -105,7 +105,7 @@ public class CS245A2{
     System.out.print("\nHere: ");
     input.nextLine();
 
-//    graph.print();
+    graph.print();
 
 
 //    System.out.print("Actor 1 name: ");
