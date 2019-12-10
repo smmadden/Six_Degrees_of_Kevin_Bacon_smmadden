@@ -19,7 +19,7 @@ public class GraphImplementation {
         // if the same value is added twice don't do anything
         if(findValue(value) == -1){
             graph.add(new GraphNode(value, vertices));
-            indeces.put(value, vertices);
+            indeces.put(value.toLowerCase(), vertices);
             vertices++;
         }
 
@@ -63,19 +63,12 @@ public class GraphImplementation {
     // do we need a function for neighbors? is just the list of nodes at a particular index
 
     public int findValue(String value){ // finds the index of the value in the array
+        value = value.toLowerCase();
         if(indeces.get(value) == null){
             return -1;
         } else {
             return indeces.get(value);
         }
-
-//        for(int i=0; i<vertices; i++){
-//            if(graph.get(i).value.equals(value)){
-//                return i;
-//            }
-//        }
-//        // finding a particular value, in this case an actor, in the list
-//        return -1; // value not found
     }
 
     // first index is the actors, second is :
@@ -84,7 +77,13 @@ public class GraphImplementation {
     public void findShortestPath(String source, String target){
         int src = findValue(source);
         int tar = findValue(target);
-        //int[][] table = new int[graph.size()][4];
+        if(src == -1 ){
+            System.out.println(source + " does not exist in the graph");
+            return;
+        } else if(tar == -1){
+            System.out.println(target + " does not exist in the graph");
+            return;
+        }
         int[] path = new int[vertices];
         int[] dist = new int[vertices];
         boolean[] known = new boolean[vertices];
@@ -118,6 +117,11 @@ public class GraphImplementation {
 
             // find min distance of the unknowns
             int minDist = findMin(path, dist, known);
+
+            if(minDist == -1){ // no min was found that was unknown, there is no pathway between the two
+                System.out.println("There is no possible pathway between " + graph.get(src).value + " and " + graph.get(tar).value);
+                return;
+            }
 
             known[minDist] = true;
 
@@ -157,7 +161,7 @@ public class GraphImplementation {
         int index = -1;
 
         for(int i=0; i<dist.length; i++){
-            if(!known[i] && path[i] != -1 && dist[i] <= min){
+            if(!known[i] && path[i] != -1 && dist[i] < min){
                 min = dist[i];
                 index = i;
             }
