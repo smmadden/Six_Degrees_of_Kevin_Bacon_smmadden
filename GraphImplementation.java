@@ -1,181 +1,29 @@
 import java.util.*;
 
 public class GraphImplementation {
-    // adjacency list implementation of a graph to store the actors
-    // uses a hashtable to keep track of what index each actor is
 
-    private ArrayList<GraphNode> graph;
-    private Hashtable<String, Integer> indeces;
-    private int vertices;
-    // don't need number of vertices because length of graph will be updated as needed
+    /*
+        Adjacency list implementation of a graph to store the actors
+        Uses a hashtable to to quickly find an actor's index in the graph
+    */
 
+    private ArrayList<GraphNode> graph; // array of linked lists
+    private Hashtable<String, Integer> indices; // key = actor's name, value = index in the graph
+    private int vertices; // number of actors added to the graph, used to track index
+
+    // constructor
     public GraphImplementation(){
         graph = new ArrayList<>();
-        indeces = new Hashtable<>();
+        indices = new Hashtable<>();
         vertices = 0;
     }
 
-    public void addVertex(String value){ // the head of the list is the vertex at that index
-        // if the same value is added twice don't do anything
-        if(findValue(value) == -1){
-            graph.add(new GraphNode(value, vertices));
-            indeces.put(value.toLowerCase(), vertices);
-            vertices++;
-        }
-
-    }
-
-    public void addEdge(int src, int tar) throws Exception {
-        // throw an exception if graph is empty or only has one value (bc not two vertices to make an edge for) or if the vertex is out of bounds
-        if(graph.size() <= 1 || src >= vertices || src < 0 || tar >= vertices || tar < 0){
-            throw new Exception();
-        }
-        // this is an undirected graph so an edge will be added to both the src and the tar
-        GraphNode source = graph.get(src);
-        GraphNode target = graph.get(tar);
-
-        // source and target could never be null - not possible because wouldn't be a vertex if so
-
-        while(source.next != null){
-            source = source.next;
-        }
-        while(target.next != null){
-            target = target.next;
-        }
-        source.next = new GraphNode(graph.get(tar));
-        target.next = new GraphNode(graph.get(src));
-
-    }
-
-    public void print(){
-        for(int i=0; i<vertices; i++){
-            GraphNode node = graph.get(i);
-            while(node != null){
-                System.out.print(node.value + ", ");
-                node = node.next;
-            }
-            System.out.println();
-        }
-        System.out.println(vertices);
-
-    }
-
-    // do we need a function for neighbors? is just the list of nodes at a particular index
-
-    public int findValue(String value){ // finds the index of the value in the array
-        value = value.toLowerCase();
-        if(indeces.get(value) == null){
-            return -1;
-        } else {
-            return indeces.get(value);
-        }
-    }
-
-    // first index is the actors, second is :
-    // vertex[0], path[1], dist[2], known[3]
-
-    public void findShortestPath(String source, String target){
-        int src = findValue(source);
-        int tar = findValue(target);
-        if(src == -1 ){
-            System.out.println(source + " does not exist in the graph");
-            return;
-        } else if(tar == -1){
-            System.out.println(target + " does not exist in the graph");
-            return;
-        }
-        int[] path = new int[vertices];
-        int[] dist = new int[vertices];
-        boolean[] known = new boolean[vertices];
-
-        for(int i=0; i<vertices; i++){
-            path[i] = -1;
-            dist[i] = Integer.MAX_VALUE;
-            known[i] = false;
-        }
-
-        // source vertex path will remain -1 and distance will be 0
-        dist[src] = 0;
-        known[src] = true;
-
-        int curr = src;
-        while(!known[tar]){ // while the target vertex is not known
-            // update all paths and distances, find min distance, set that to true
-
-
-            // update all paths
-            GraphNode node = graph.get(curr); // node is the actor, node.next and so on are all of the neighbors
-            while(node.next != null){
-                node = node.next;
-                // if the total distance of the entire path, which would be the dist for the current node + 1
-                if(!known[node.index] && dist[node.index] > dist[curr]+1 ) { // need to check if the distance is less than first because if not then don't change anything
-                    path[node.index] = curr;
-                    dist[node.index] = dist[curr] + 1;
-                }
-
-            }
-
-            // find min distance of the unknowns
-            int minDist = findMin(path, dist, known);
-
-            if(minDist == -1){ // no min was found that was unknown, there is no pathway between the two
-                System.out.println("There is no possible pathway between " + graph.get(src).value + " and " + graph.get(tar).value);
-                return;
-            }
-
-            known[minDist] = true;
-
-
-
-            curr = minDist;
-
-        }
-
-        // now the target is known
-        // need to print the results or return a string
-
-        // to print, need to trace back the entire path
-
-        printPath(path, tar);
-
-//        for(int i=0; i< path.length; i++){
-//            System.out.println(known[i] + " " + path[i] + " " + dist[i]);
-//
-//        }
-
-
-    }
-
-    private void printPath(int[] path, int index){
-        if(path[index] == -1){ // base case, the path of the source will be -1
-            System.out.print(graph.get(index).value); // prints out the value
-        } else {
-            printPath(path, path[index]);
-            System.out.print(" --> " + graph.get(index).value);
-        }
-
-    }
-
-    private int findMin(int[] path, int[] dist, boolean[] known){
-        int min = Integer.MAX_VALUE;
-        int index = -1;
-
-        for(int i=0; i<dist.length; i++){
-            if(!known[i] && path[i] != -1 && dist[i] < min){
-                min = dist[i];
-                index = i;
-            }
-        }
-        return index;
-    }
-
-
-
-
     class GraphNode{
-        private String value;
-        private int index; // to keep track of the index of the actor in the list instead of doing a find each time
-        private GraphNode next;
+        private String value; // the value of the node, in this case the name of the actor
+        private int index; // to keep track of the index of the actor in the graph to avoid doing a find each time
+        private GraphNode next; // next node in the linked list
+
+        // constructors
 
         public GraphNode(String value, int index){
             this.value = value;
@@ -183,7 +31,8 @@ public class GraphImplementation {
             next = null;
         }
 
-        public GraphNode(GraphNode node){ // creates a copy of the node that is a parameter - easier to add edges this way
+        public GraphNode(GraphNode node){
+            // creates a copy of the parameter node that is a parameter, used to add edges more efficiently
             value = node.value;
             index = node.index;
             next = null;
@@ -191,5 +40,171 @@ public class GraphImplementation {
 
         // getters and setters
 
+        public String getValue(){
+            return value;
+        }
+
+        public int getIndex(){
+            return index;
+        }
+
+        public GraphNode getNext(){
+            return next;
+        }
+
+        public void setValue(String val){
+            value = val;
+        }
+
+        public void setIndex(int ind){
+            index = ind;
+        }
+
+        public void setNext(GraphNode node){
+            next = node;
+        }
+
     }
+
+    public void addVertex(String value){
+        // makes sure the same value is not added twice
+        if(findValue(value) == -1){
+            // add a new node to the graph and to the hashtable
+            graph.add(new GraphNode(value, vertices));
+            indices.put(value.toLowerCase(), vertices); // added value as lowercase to make finding simplified
+            vertices++;
+        }
+
+    }
+
+    public void addEdge(int src, int tar) throws Exception {
+        // throws an exception if graph is empty or only has one value (no two vertices for an edge) or if the vertex is out of bounds
+        if(graph.size() <= 1 || src >= vertices || src < 0 || tar >= vertices || tar < 0){
+            throw new Exception();
+        }
+
+        // this is an undirected graph so need to add an edge to both the src and the tar
+        GraphNode source = graph.get(src);
+        GraphNode target = graph.get(tar);
+
+        // adds the new nodes to the beginning of the linked list to save time
+        if(source.next == null){
+            source.next = new GraphNode(graph.get(tar));
+        } else {
+            GraphNode node = new GraphNode(graph.get(tar));
+            node.next = source.next;
+            source.next = node;
+        }
+
+        if(target.next == null){
+            target.next = new GraphNode(graph.get(src));
+        } else {
+            GraphNode node = new GraphNode(graph.get(src));
+            node.next = target.next;
+            target.next = node;
+        }
+    }
+
+    public int findValue(String value){
+        // finds the index of the value in the array using the hashtable
+        value = value.toLowerCase(); // values stored in lowercase in hashtable
+        if(indices.get(value) == null){
+            // if the value is not in the hashtable, return -1
+            return -1;
+        } else {
+            // return the index stored in the hashtable
+            return indices.get(value);
+        }
+    }
+
+    public void findShortestPath(String source, String target){
+        // uses Dijkstra's algorithm to find the shortest path from the source to the target
+        int src = findValue(source);
+        int tar = findValue(target);
+
+        // if either the source or target cannot be found in the graph, end the program
+        if(src == -1 ){
+            System.out.println(source + " does not exist in the graph.");
+            return;
+        } else if(tar == -1){
+            System.out.println(target + " does not exist in the graph.");
+            return;
+        }
+
+        // arrays to keep track of the path, the distance from the source, and if the vertex is known
+        int[] path = new int[vertices];
+        int[] dist = new int[vertices];
+        boolean[] known = new boolean[vertices];
+
+        // populate the arrays with their starting values
+        for(int i=0; i<vertices; i++){
+            path[i] = -1;
+            dist[i] = Integer.MAX_VALUE;
+            known[i] = false;
+        }
+
+        // source vertex's path will remain -1 and the distance will be 0
+        dist[src] = 0;
+        known[src] = true;
+
+        int curr = src;
+        while(!known[tar]){ // while the target vertex is not known
+
+            // update all paths
+            GraphNode node = graph.get(curr); // node is the actor, node.next and so on are all of the neighbors
+            while(node.next != null){
+                node = node.next;
+                // if the total distance of the path is less than the current distance, then update
+                if(!known[node.index] && dist[node.index] > dist[curr]+1 ) {
+                    // need to update both path and distance
+                    path[node.index] = curr;
+                    dist[node.index] = dist[curr] + 1;
+                }
+            }
+
+            // finds the index of the next minimum distance that is not known
+            int minDist = findMin(path, dist, known);
+
+            if(minDist == -1){ // no min was found, therefore there is no pathway between the two
+                System.out.println("There is no possible pathway between " + graph.get(src).value + " and " + graph.get(tar).value);
+                return;
+            }
+
+            // set the vertex for the minimum distance to known, then change the current vertex for the next loop
+            known[minDist] = true;
+            curr = minDist;
+
+        }
+
+        // prints the pathway recursively
+        printPath(path, tar);
+        System.out.println();
+    }
+
+    private int findMin(int[] path, int[] dist, boolean[] known){
+        // finds the next minimum distance to be selected
+        int min = Integer.MAX_VALUE;
+        int index = -1;
+        for(int i=0; i<dist.length; i++){
+            // if the vertex is unknown, there is a viable pathway, and the distance is less than the min
+            if(!known[i] && path[i] != -1 && dist[i] < min){
+                // update the minimum and the index
+                min = dist[i];
+                index = i;
+            }
+        }
+        // if the conditions are never met, returns -1
+        return index;
+    }
+
+    private void printPath(int[] path, int index){
+        // prints the entire path from the index back to the source
+        if(path[index] == -1){ // base case: the path of the source is -1, so print
+            System.out.print(graph.get(index).value);
+        } else {
+            printPath(path, path[index]);
+            System.out.print(" --> " + graph.get(index).value);
+        }
+    }
+
 }
