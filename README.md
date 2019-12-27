@@ -1,4 +1,5 @@
 # Six Degrees of Kevin Bacon
+###### _Completed Dec. 9, 2019_
 
 Six Degrees of Kevin Bacon​ is a knowledge game based on the “small world” or “six degrees of separation” concept. It is possible for a large network to be linked by a limited number of steps through one or more who are well-connected.
 
